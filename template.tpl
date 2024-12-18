@@ -180,13 +180,6 @@ const ALLOWED_CATEGORIES = [
   'preferences',
 ];
 
-/**
- * Split the input string using comma as a delimiter, returning an array of strings.
- *
- * @param {string} input
- *
- * @return {string[]}
- */
 const splitInput = (input) => {
   return input
     .split(',')
@@ -194,14 +187,6 @@ const splitInput = (input) => {
     .filter((entry) => entry.length !== 0);
 };
 
-/**
- * Process a row of input from the default settings table, returning an object
- * which can be passed as an argument to `setDefaultConsentState`.
- *
- * @param {object} settings
- *
- * @return {void}
- */
 const parseCommandData = (settings) => {
   const regions = splitInput(settings.region);
 
@@ -226,33 +211,11 @@ const parseCommandData = (settings) => {
   return commandData;
 }
 
-/**
- * Called when consent changes. Assumes that consent object contains keys which
- * directly correspond to Google consent types.
- *
- * @param {object} consentModeStates
- *
- * @return {void}
- */
+
 const onUserConsent = (consentModeStates) => {
   updateConsentState(consentModeStates);
 };
 
-/**
- * Return the GCM consent states based on the given accepted cookie categories.
- *
- * @param {string[]} categories Accepted cookie categories.
- *
- * @return {{
- *   ad_storage: string,
- *   ad_user_data: string,
- *   security_storage: string,
- *   functionality_storage: string,
- *   personalization_storage: string,
- *   ad_personalization: string,
- *   analytics_storage: string
- * }}
- */
 const getConsentStatesByCategories = (categories) => {
   const consentModeStates = {
     ad_storage: 'denied',
@@ -327,26 +290,10 @@ const main = (data) => {
     setDefaultConsentState(defaultData);
   });
 
-  /*
-   * Check if cookie is set and has values that correspond to
-   * Google consent types. If it does, run `onUserConsent()`.
-   */
   const consentModeStates = getConsentStatesByCookie(COOKIE_NAME);
   if (consentModeStates !== null) {
     onUserConsent(consentModeStates);
   }
-
-  /*
-   * Add event listener to trigger update when consent changes.
-   *
-   * References an external method on the window object which accepts a
-   * function as an argument. If you do not have such a method, you will need
-   * to create one before continuing. This method should add the function
-   * that is passed as an argument as a callback for an event emitted when
-   * the user updates their consent. The callback should be called with an
-   * object containing fields that correspond to the five built-in Google
-   * consent types.
-   */
   callInWindow('addCookiexGCMConsentListener', onUserConsent);
 };
 
