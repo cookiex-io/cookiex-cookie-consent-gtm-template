@@ -5,6 +5,7 @@ Template Gallery Developer Terms of Service available at
 https://developers.google.com/tag-manager/gallery-tos (or such other URL as
 Google may provide), as modified from time to time.
 
+
 ___INFO___
 
 {
@@ -24,6 +25,7 @@ ___INFO___
     "WEB"
   ]
 }
+
 
 ___TEMPLATE_PARAMETERS___
 
@@ -130,6 +132,7 @@ ___TEMPLATE_PARAMETERS___
     "help": "Will pass through ad click, client ID, and session ID information in URLs"
   }
 ]
+
 
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
@@ -278,6 +281,7 @@ const main = (data) => {
 
 main(data);
 data.gtmOnSuccess();
+
 
 ___WEB_PERMISSIONS___
 
