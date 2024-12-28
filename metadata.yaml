@@ -1,5 +1,5 @@
 homepage: "https://github.com/cookiex-io/cookiex-cookie-consent-gtm-template"
 documentation: "https://github.com/cookiex-io/wp-client"
 versions:
-  - sha: bf3a6a91e1ac8b69098bee1b0ff90fb6a39b7cb2
+  - sha: 2bb0d0f7ee47a03efbb52bd33f7e35ee1d114cc1
     changeNotes: Initial version
