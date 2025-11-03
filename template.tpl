@@ -172,9 +172,18 @@ const main = (data) => {
   gtagSet('url_passthrough', data.url_passthrough);
   // Set default consent state(s)
   data.defaultSettings.forEach(settings => {
-    const defaultData = parseCommandData(settings);
-  // wait_for_update (ms) allows for time to receive visitor choices from the CMP
-    defaultData.wait_for_update = 500;
+    const defaultData = {
+      ...parseCommandData(settings),
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'denied',
+      functionality_storage: 'granted',
+      personalization_storage: 'denied',
+      security_storage: 'granted',
+      wait_for_update: 500
+    };
+    
     setDefaultConsentState(defaultData);
   });
 
