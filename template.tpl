@@ -164,52 +164,48 @@ const onUserConsent = (consent) => {
  *   Executes the default command, sets the developer ID, and sets up the consent
  *   update callback
  */
-const main = (data) => {
-  /*
-   * Optional settings using gtagSet
-   */
-  gtagSet('ads_data_redaction', data.ads_data_redaction);
-  gtagSet('url_passthrough', data.url_passthrough);
-  // Set default consent state(s)
-  data.defaultSettings.forEach(settings => {
-    const defaultData = {
-      ...parseCommandData(settings),
-      ad_storage: 'denied',
-      ad_user_data: 'denied',
-      ad_personalization: 'denied',
-      analytics_storage: 'denied',
-      functionality_storage: 'granted',
-      personalization_storage: 'denied',
-      security_storage: 'granted',
-      wait_for_update: 500
-    };
-    
-    setDefaultConsentState(defaultData);
-  });
+const main = function(data) {
+  // 1. Set default consent states
+  var defaultData = {
+    ad_storage: 'denied',
+    analytics_storage: 'denied',
+    functionality_storage: 'granted',
+    personalization_storage: 'denied',
+    security_storage: 'granted',
+    wait_for_update: 500
+  };
 
-  // Check if cookie is set and has values that correspond to Google consent
-  // types. If it does, run onUserConsent().
-  const settings = getCookieValues(COOKIE_NAME);
-  if (typeof settings !== 'undefined') {
-    onUserConsent(settings);
+  // 2. Merge with any existing settings from parseCommandData
+  if (data.defaultSettings && data.defaultSettings.length > 0) {
+    var parsedSettings = parseCommandData(data.defaultSettings[0]) || {};
+    var allowedTypes = ['ad_storage', 'analytics_storage', 'functionality_storage', 
+                       'personalization_storage', 'security_storage'];
+    for (var i = 0; i < allowedTypes.length; i++) {
+      var type = allowedTypes[i];
+      if (parsedSettings[type] !== undefined) {
+        defaultData[type] = parsedSettings[type];
+      }
+    }
   }
-  /**
-   *   Add event listener to trigger update when consent changes
-   *
-   *   References an external method on the window object which accepts a
-   *   function as an argument. If you do not have such a method, you will need
-   *   to create one before continuing. This method should add the function
-   *   that is passed as an argument as a callback for an event emitted when
-   *   the user updates their consent. The callback should be called with an
-   *   object containing fields that correspond to the five built-in Google
-   *   consent types.
-   */
-  callInWindow('addCookiexGCMConsentListener', onUserConsent);
+
+  // 3. Set the default consent state
+  setDefaultConsentState(defaultData);
+
+  // 4. Set optional gtag settings
+  if (data.ads_data_redaction && data.gtag) {
+    data.gtag('set', 'ads_data_redaction', true);
+  }
+  if (data.url_passthrough && data.gtag) {
+    data.gtag('set', 'url_passthrough', true);
+  }
+
+  // 5. Signal that the template has completed successfully
+  data.gtmOnSuccess();
 };
+
+// Execute the main function
 main(data);
 data.gtmOnSuccess();
-
-
 ___WEB_PERMISSIONS___
 
 [
